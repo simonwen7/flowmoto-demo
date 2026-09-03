@@ -15,9 +15,11 @@ import "./App.css";
 import "./SwipeDeck.css";
 import "./KnowledgeCheck.css";
 import "./AppliedTask.css";
+import "./JudgingTask.css";
 import { SwipeDeck } from "./components/SwipeDeck";
 import { KnowledgeCheck } from "./components/KnowledgeCheck";
 import { AppliedTask } from "./components/AppliedTask";
+import { JudgingTask } from "./components/JudgingTask";
 import { demoCards } from "./data/demoCards";
 
 type Screen =
@@ -25,7 +27,8 @@ type Screen =
   | "home"
   | "deck"
   | "quiz"
-  | "applied";
+  | "applied"
+  | "judging";
 
 type DeckMode = "daily" | "remediation";
 
@@ -80,6 +83,14 @@ const reviewNotes = [
       "The specification defines the Tier 1 learning objective and gives examples of realistic decisions, but does not define this exact scenario.",
     demo:
       "The Applying module uses fictional vehicles and simulated evidence to demonstrate gather → verify → decide without presenting demo data as real-world facts.",
+  },
+  {
+    title: "Judging task structure",
+    status: "Demo assumption",
+    detail:
+      "The specification establishes Judging as an open learner module but does not define a dedicated Judging task flow.",
+    demo:
+      "This v0.1 demo proposes a four-case Use / Verify / Reject response-triage interaction so the third module can be reviewed as a complete experience.",
   },
   {
     title: "Video threshold",
@@ -344,7 +355,7 @@ function App() {
       return "Try one complete Tier 1 decision task: use an AI first pass, verify its claims against supplied evidence, and make the final call yourself.";
     }
 
-    return "Judging remains open in the product structure. This v0.1 demo demonstrates judgment behavior inside the Foundations quiz and Applying evidence-check flow rather than adding a separate Judging task.";
+    return "This v0.1 demo proposes a short response-triage exercise: decide when an AI answer is ready to use, when it needs verification, and when it should be rejected.";
   };
 
   const getModuleAction = () => {
@@ -356,7 +367,7 @@ function App() {
       return "Start applied task";
     }
 
-    return "View learning loop";
+    return "Start judgment practice";
   };
 
   const handleModuleAction = () => {
@@ -370,7 +381,7 @@ function App() {
       return;
     }
 
-    setActiveModule("foundations");
+    setScreen("judging");
   };
 
   return (
@@ -987,7 +998,7 @@ function App() {
               }
             />
           </motion.div>
-        ) : (
+        ) : screen === "applied" ? (
           <motion.div
             key="applied"
             initial={{
@@ -1017,6 +1028,34 @@ function App() {
               onComplete={() =>
                 setScreen("home")
               }
+            />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="judging"
+            initial={{
+              opacity: 0,
+              x: 34,
+              scale: 0.994,
+            }}
+            animate={{
+              opacity: 1,
+              x: 0,
+              scale: 1,
+            }}
+            exit={{
+              opacity: 0,
+              x: -28,
+              scale: 0.994,
+            }}
+            transition={{
+              duration: 0.42,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+          >
+            <JudgingTask
+              onBack={() => setScreen("home")}
+              onComplete={() => setScreen("home")}
             />
           </motion.div>
         )}
