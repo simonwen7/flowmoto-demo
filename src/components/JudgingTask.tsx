@@ -14,6 +14,7 @@ import {
   judgmentScenarios,
   type JudgmentVerdict,
 } from "../data/demoJudging";
+import judgingCompass from "../assets/flowmoto-judging-compass.png";
 
 type JudgingTaskProps = {
   onBack: () => void;
@@ -142,23 +143,12 @@ export function JudgingTask({
           </div>
 
           <div className="judgment-compass-preview">
-            <div className="compass-preview-card compass-preview-card--use">
-              <span>01</span>
-              <strong>USE</strong>
-              <p>Inspectable + low risk</p>
-            </div>
-
-            <div className="compass-preview-card compass-preview-card--verify">
-              <span>02</span>
-              <strong>VERIFY</strong>
-              <p>Claim matters + source needed</p>
-            </div>
-
-            <div className="compass-preview-card compass-preview-card--reject">
-              <span>03</span>
-              <strong>REJECT</strong>
-              <p>Unsupported answer should not survive</p>
-            </div>
+            <img
+              className="judging-compass-art"
+              src={judgingCompass}
+              alt=""
+              draggable={false}
+            />
           </div>
         </motion.section>
       ) : !finished ? (
@@ -392,6 +382,13 @@ export function JudgingTask({
           </div>
 
           <div className="judging-finish__content">
+            <img
+              className="judging-compass-art judging-compass-art--finish"
+              src={judgingCompass}
+              alt=""
+              draggable={false}
+            />
+
             <div className="status-chip">
               <ShieldAlert size={15} />
               Judgment practice complete

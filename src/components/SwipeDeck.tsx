@@ -16,6 +16,8 @@ import {
   X,
 } from "lucide-react";
 import { demoCards, type DemoCard } from "../data/demoCards";
+import birdCurious from "../assets/flowmoto-bird-curious.png";
+import birdSuccess from "../assets/flowmoto-bird-success.png";
 
 type DetailMode = "what" | "unsure" | null;
 type DeckMode = "daily" | "remediation";
@@ -88,7 +90,7 @@ export function SwipeDeck({
     const target = direction * Math.max(viewportWidth * 0.92, 760);
 
     const controls = animate(x, target, {
-      duration: reducedMotion ? 0.01 : 0.36,
+      duration: reducedMotion ? 0.01 : 0.9,
       ease: [0.22, 1, 0.36, 1],
     });
 
@@ -406,6 +408,23 @@ export function SwipeDeck({
                 <span />
                 you choose the depth
               </div>
+
+              <motion.img
+                className="deck-side-mascot"
+                src={birdCurious}
+                alt=""
+                draggable={false}
+                initial={
+                  reducedMotion
+                    ? false
+                    : { opacity: 0, y: 6 }
+                }
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.45,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+              />
             </aside>
           </div>
 
@@ -559,6 +578,13 @@ export function SwipeDeck({
           </div>
 
           <div className="deck-finish__content">
+            <img
+              className="fm-success-bird"
+              src={birdSuccess}
+              alt=""
+              draggable={false}
+            />
+
             <div className="status-chip">
               <Check size={15} />
               Remediation complete

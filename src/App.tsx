@@ -2,13 +2,10 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
-  BookOpen,
   Check,
   ChevronLeft,
   MessageCircle,
-  Scale,
   Sparkles,
-  Wrench,
   X,
 } from "lucide-react";
 import "./App.css";
@@ -16,13 +13,21 @@ import "./SwipeDeck.css";
 import "./KnowledgeCheck.css";
 import "./AppliedTask.css";
 import "./JudgingTask.css";
+import "./EntranceHero.css";
+import "./FlowMotoTheme.css";
 import { SwipeDeck } from "./components/SwipeDeck";
 import { KnowledgeCheck } from "./components/KnowledgeCheck";
 import { AppliedTask } from "./components/AppliedTask";
 import { JudgingTask } from "./components/JudgingTask";
+import { EntranceHero } from "./components/EntranceHero";
 import { demoCards } from "./data/demoCards";
+import birdBranch from "./assets/flowmoto-bird-branch-small.png";
+import iconFoundations from "./assets/flowmoto-icon-foundations.png";
+import iconApplying from "./assets/flowmoto-icon-applying.png";
+import iconJudging from "./assets/flowmoto-icon-judging.png";
 
 type Screen =
+  | "entrance"
   | "onboarding"
   | "home"
   | "deck"
@@ -117,7 +122,7 @@ const modules = [
     title: "Foundations",
     description:
       "Build the mental models that make AI easier to understand.",
-    icon: BookOpen,
+    illustration: iconFoundations,
     note: "Know what you're working with.",
   },
   {
@@ -126,7 +131,7 @@ const modules = [
     title: "Applying",
     description:
       "Practice using AI inside practical, everyday decisions.",
-    icon: Wrench,
+    illustration: iconApplying,
     note: "Turn knowledge into action.",
   },
   {
@@ -135,7 +140,7 @@ const modules = [
     title: "Judging",
     description:
       "Learn when to trust, question, or verify an AI response.",
-    icon: Scale,
+    illustration: iconJudging,
     note: "Stay in charge of the answer.",
   },
 ];
@@ -279,7 +284,7 @@ function DoodleField() {
 
 function App() {
   const [screen, setScreen] =
-    useState<Screen>("onboarding");
+    useState<Screen>("entrance");
 
   const [selectedRole, setSelectedRole] =
     useState("");
@@ -393,43 +398,62 @@ function App() {
 
       <DoodleField />
 
-      <header className="topbar">
-        <button
-          className="brand"
-          onClick={() =>
-            setScreen("onboarding")
-          }
-          aria-label="Return to FlowMoto onboarding"
-        >
-          <span className="brand-mark">
-            FM
-          </span>
-          <span>FlowMoto</span>
-        </button>
-
-        <div className="topbar-actions">
-          <span className="demo-tag">
-            LEARNER DEMO · V0.1
-          </span>
-
+      {screen !== "entrance" && (
+        <header className="topbar">
           <button
-            className="review-button"
+            className="brand"
             onClick={() =>
-              setReviewOpen(true)
+              setScreen("onboarding")
             }
+            aria-label="Return to FlowMoto onboarding"
           >
-            <MessageCircle
-              size={17}
-              strokeWidth={1.9}
-            />
-            <span>Review notes</span>
-            <span className="review-dot" />
+            <span className="brand-mark">
+              FM
+            </span>
+            <span>FlowMoto</span>
           </button>
-        </div>
-      </header>
+
+          <div className="topbar-actions">
+            <span className="demo-tag">
+              LEARNER DEMO · V0.1
+            </span>
+
+            <button
+              className="review-button"
+              onClick={() =>
+                setReviewOpen(true)
+              }
+            >
+              <MessageCircle
+                size={17}
+                strokeWidth={1.9}
+              />
+              <span>Review notes</span>
+              <span className="review-dot" />
+            </button>
+          </div>
+        </header>
+      )}
 
       <AnimatePresence mode="wait">
-        {screen === "onboarding" ? (
+        {screen === "entrance" ? (
+          <motion.div
+            key="entrance"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{
+              duration: 0.28,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+          >
+            <EntranceHero
+              onEnter={() =>
+                setScreen("onboarding")
+              }
+            />
+          </motion.div>
+        ) : screen === "onboarding" ? (
           <motion.section
             key="onboarding"
             className="screen onboarding-screen"
@@ -454,23 +478,54 @@ function App() {
             }}
           >
             <div className="onboarding-copy">
-              <motion.div
-                className="status-chip"
-                initial={{
-                  opacity: 0,
-                  y: 8,
-                }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                }}
-                transition={{
-                  delay: 0.08,
-                }}
-              >
-                <Sparkles size={15} />
-                Quick check-in
-              </motion.div>
+              <div className="onboarding-checkin">
+                <motion.div
+                  className="status-chip"
+                  initial={{
+                    opacity: 0,
+                    y: 8,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                  }}
+                  transition={{
+                    delay: 0.08,
+                  }}
+                >
+                  <Sparkles size={15} />
+                  Quick check-in
+                </motion.div>
+
+                <div className="onboarding-checkin__guide">
+                  <motion.img
+                    className="onboarding-mascot"
+                    src={birdBranch}
+                    alt=""
+                    draggable={false}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      delay: 0.18,
+                      duration: 0.5,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
+                  />
+                  <motion.p
+                    className="onboarding-annotation"
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      delay: 0.28,
+                      duration: 0.45,
+                    }}
+                  >
+                    Tell me a little
+                    <br />
+                    about your day.
+                  </motion.p>
+                </div>
+              </div>
 
               <motion.h1
                 initial={{
@@ -735,23 +790,40 @@ function App() {
                   YOUR DECK IS READY
                 </p>
 
-                <h1>
-                  Learn a little. Use it a
-                  lot.
-                </h1>
+                <h1>Good to see you.</h1>
+
+                <p className="home-heading__support">
+                  What would you like to focus on today?
+                </p>
               </div>
 
-              <div className="daily-card">
-                <span className="daily-card__dot" />
+              <div className="home-heading__aside">
+                <div className="home-mascot-guide">
+                  <img
+                    className="home-mascot-guide__image"
+                    src={birdBranch}
+                    alt=""
+                    draggable={false}
+                  />
+                  <p className="home-mascot-guide__note">
+                    Pick a path.
+                    <br />
+                    I&apos;ll be here.
+                  </p>
+                </div>
 
-                <div>
-                  <strong>
-                    Today
-                  </strong>
+                <div className="daily-card">
+                  <span className="daily-card__dot" />
 
-                  <span>
-                    3 fresh cards waiting
-                  </span>
+                  <div>
+                    <strong>
+                      Today
+                    </strong>
+
+                    <span>
+                      3 fresh cards waiting
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -777,9 +849,6 @@ function App() {
             <div className="module-grid">
               {modules.map(
                 (module, index) => {
-                  const Icon =
-                    module.icon;
-
                   const active =
                     activeModule ===
                     module.id;
@@ -798,11 +867,11 @@ function App() {
                         )
                       }
                       whileHover={{
-                        y: -7,
+                        y: -5,
                         rotate:
                           index === 1
-                            ? 0.35
-                            : -0.35,
+                            ? 0.25
+                            : -0.25,
                       }}
                       whileTap={{
                         scale: 0.985,
@@ -819,21 +888,21 @@ function App() {
                             module.eyebrow
                           }
                         </span>
-
-                        <span className="module-icon">
-                          <Icon
-                            size={23}
-                            strokeWidth={
-                              1.8
-                            }
-                          />
-                        </span>
                       </div>
 
                       <div>
                         <h2>
                           {module.title}
                         </h2>
+
+                        <img
+                          className="module-illustration"
+                          src={
+                            module.illustration
+                          }
+                          alt=""
+                          draggable={false}
+                        />
 
                         <p>
                           {
@@ -1061,14 +1130,16 @@ function App() {
         )}
       </AnimatePresence>
 
-      <footer className="footer">
-        <span>FlowMoto</span>
-        <span className="footer-line" />
-        <span>
-          Designed for a few thoughtful
-          minutes a day.
-        </span>
-      </footer>
+      {screen !== "entrance" && (
+        <footer className="footer">
+          <span>FlowMoto</span>
+          <span className="footer-line" />
+          <span>
+            Designed for a few thoughtful
+            minutes a day.
+          </span>
+        </footer>
+      )}
 
       <ReviewPanel
         open={reviewOpen}

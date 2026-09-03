@@ -1,3 +1,20 @@
+/* UI Polish V1 — global refinements */
+:root {
+  --paper: #f3ecda;
+  --paper-deep: #e6dcc4;
+  --ink: #2a3a2f;
+  --ink-soft: #667164;
+  --green: #6a8f74;
+  --green-dark: #31583d;
+  --green-soft: #dce7cf;
+  --yellow: #e6cf7a;
+  --yellow-soft: #f4e8b4;
+  --red: #c27666;
+  --line: rgba(42, 58, 47, 0.18);
+  --cream: rgba(255, 252, 245, 0.82);
+  --shadow-paper: 0 18px 36px rgba(72, 62, 39, 0.07);
+}
+
 .app-shell {
   position: relative;
   min-height: 100vh;
@@ -50,12 +67,12 @@
 .brand-mark {
   width: 36px;
   height: 36px;
-  border: 1.8px solid var(--ink);
+  border: 1.4px solid rgba(42, 58, 47, 0.55);
   display: grid;
   place-items: center;
   border-radius: 48% 52% 45% 55% / 55% 46% 54% 45%;
-  background: rgba(255, 253, 247, 0.5);
-  box-shadow: 2px 3px 0 rgba(38, 52, 41, 0.12);
+  background: rgba(255, 252, 245, 0.7);
+  box-shadow: 2px 3px 0 rgba(42, 58, 47, 0.08);
   font-family: "SFMono-Regular", Consolas, monospace;
   font-size: 11px;
   letter-spacing: 0.02em;
@@ -118,17 +135,24 @@
 }
 
 .onboarding-screen {
-  min-height: calc(100vh - 160px);
+  /* Desktop height comes from the right role card; left bottom-aligns to it. */
+  min-height: auto;
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(480px, 0.85fr);
-  align-items: center;
+  align-items: start;
   gap: clamp(48px, 8vw, 110px);
-  padding: 50px 0 88px;
+  padding: 22px 0 88px;
 }
 
 .onboarding-copy {
-  align-self: center;
+  /* Whole left cluster bottom-aligns to the role card without moving the right. */
+  align-self: end;
+  height: 0;
   max-width: 590px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: visible;
 }
 
 .status-chip {
@@ -210,6 +234,7 @@
   position: relative;
   width: min(100%, 530px);
   justify-self: end;
+  align-self: start;
 }
 
 .role-card,
@@ -481,19 +506,62 @@
 }
 
 .home-heading h1 {
-  font-size: clamp(45px, 5vw, 72px);
+  font-size: clamp(50px, 5.4vw, 78px);
+  letter-spacing: -0.056em;
+  line-height: 0.94;
+  max-width: 10ch;
+}
+
+.home-heading__aside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 14px;
+}
+
+.home-mascot-guide {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 240px;
+}
+
+.home-mascot-guide__image {
+  width: 68px;
+  height: auto;
+  flex: 0 0 68px;
+  transform: rotate(2deg);
+  filter: drop-shadow(0 8px 14px rgba(72, 62, 39, 0.08));
+}
+
+.home-mascot-guide__note {
+  margin: 0;
+  color: var(--green-dark);
+  font-family:
+    "Iowan Old Style",
+    "Palatino Linotype",
+    Palatino,
+    Georgia,
+    serif;
+  font-size: 15px;
+  font-style: italic;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  transform: rotate(-1.5deg);
 }
 
 .daily-card {
   min-width: 220px;
   padding: 15px 17px;
-  border: 1.5px solid rgba(38, 52, 41, 0.3);
+  border: 1.25px solid rgba(42, 58, 47, 0.22);
   border-radius: 17px 15px 19px 14px / 15px 19px 14px 17px;
-  background: rgba(255, 253, 247, 0.52);
+  background: rgba(255, 252, 245, 0.72);
   display: flex;
   align-items: center;
   gap: 11px;
-  box-shadow: 2px 3px 0 rgba(38, 52, 41, 0.09);
+  box-shadow:
+    2px 3px 0 rgba(42, 58, 47, 0.06),
+    var(--shadow-paper);
 }
 
 .daily-card__dot {
@@ -561,17 +629,21 @@
   overflow: hidden;
   appearance: none;
   text-align: left;
-  border: 1.6px solid rgba(38, 52, 41, 0.45);
+  border: 1.25px solid rgba(42, 58, 47, 0.28);
   border-radius: 25px 19px 28px 18px / 19px 28px 18px 25px;
-  background: rgba(255, 253, 247, 0.68);
-  padding: 24px;
+  background: rgba(255, 252, 245, 0.78);
+  padding: 26px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   box-shadow:
-    3px 4px 0 rgba(38, 52, 41, 0.1),
-    0 20px 38px rgba(72, 62, 39, 0.06);
+    2px 3px 0 rgba(42, 58, 47, 0.07),
+    0 18px 34px rgba(72, 62, 39, 0.06);
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease;
 }
 
 .module-card:nth-child(2) {
@@ -583,8 +655,11 @@
 }
 
 .module-card--active {
-  background: rgba(239, 244, 225, 0.86);
-  border-color: var(--green-dark);
+  background: rgba(236, 243, 224, 0.9);
+  border-color: rgba(49, 88, 61, 0.55);
+  box-shadow:
+    2px 3px 0 rgba(49, 88, 61, 0.1),
+    0 20px 36px rgba(72, 62, 39, 0.07);
 }
 
 .module-card__top {
@@ -601,23 +676,24 @@
 }
 
 .module-icon {
-  width: 48px;
-  height: 48px;
+  width: 50px;
+  height: 50px;
   display: grid;
   place-items: center;
-  border: 1.4px solid rgba(38, 52, 41, 0.35);
+  border: 1.2px solid rgba(42, 58, 47, 0.24);
   border-radius: 49% 51% 46% 54% / 54% 47% 53% 46%;
   transform: rotate(2deg);
-  background: rgba(255, 255, 255, 0.42);
+  background: rgba(219, 231, 207, 0.45);
+  color: var(--green-dark);
 }
 
 .module-card h2 {
-  margin: 0 0 9px;
+  margin: 0 0 10px;
   font-family:
     "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
-  font-size: 34px;
-  font-weight: 580;
-  letter-spacing: -0.035em;
+  font-size: 35px;
+  font-weight: 560;
+  letter-spacing: -0.04em;
 }
 
 .module-card p {
@@ -633,8 +709,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  border-top: 1px solid rgba(38, 52, 41, 0.14);
-  padding-top: 15px;
+  border-top: 1px solid rgba(42, 58, 47, 0.12);
+  padding-top: 16px;
   font-size: 11px;
   font-weight: 720;
   color: #5e685e;
@@ -895,17 +971,22 @@
   .onboarding-screen {
     grid-template-columns: 1fr;
     gap: 48px;
-    padding-top: 42px;
+    padding-top: 24px;
     padding-bottom: 130px;
   }
 
   .onboarding-copy {
     max-width: 760px;
+    height: auto;
+    align-self: start;
+    display: block;
+    justify-content: normal;
   }
 
   .role-card-wrap {
     justify-self: stretch;
     width: min(100%, 680px);
+    align-self: start;
   }
 
   .module-grid {
@@ -971,6 +1052,11 @@
   .home-heading {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .home-heading__aside {
+    width: 100%;
+    align-items: flex-start;
   }
 
   .daily-card {

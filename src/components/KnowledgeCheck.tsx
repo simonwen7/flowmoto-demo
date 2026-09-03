@@ -8,7 +8,10 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
-import { demoQuestions } from "../data/demoQuestions";
+import {
+  demoQuestions,
+} from "../data/demoQuestions";
+import birdSuccess from "../assets/flowmoto-bird-success.png";
 
 type KnowledgeCheckProps = {
   onBack: () => void;
@@ -310,6 +313,13 @@ export function KnowledgeCheck({
           </div>
 
           <div className="quiz-finish__content">
+            <img
+              className="fm-success-bird"
+              src={birdSuccess}
+              alt=""
+              draggable={false}
+            />
+
             <div className="status-chip">
               <Sparkles size={15} />
               Check complete

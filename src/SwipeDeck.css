@@ -140,10 +140,10 @@
 
 .deck-progress__track {
   position: relative;
-  height: 7px;
-  border: 1px solid rgba(38, 52, 41, 0.22);
+  height: 6px;
+  border: 1px solid rgba(42, 58, 47, 0.16);
   border-radius: 999px;
-  background: rgba(255, 253, 247, 0.48);
+  background: rgba(255, 252, 245, 0.55);
 }
 
 .deck-progress__fill {
@@ -151,12 +151,7 @@
   inset: 0 auto 0 0;
   width: 0;
   border-radius: inherit;
-  background:
-    linear-gradient(
-      90deg,
-      rgba(95, 135, 106, 0.7),
-      rgba(126, 161, 112, 0.86)
-    );
+  background: rgba(106, 143, 116, 0.78);
 }
 
 .deck-progress__pencil {
@@ -195,7 +190,7 @@
 .swipe-card {
   position: absolute;
   inset: 0;
-  border: 1.8px solid rgba(38, 52, 41, 0.68);
+  border: 1.45px solid rgba(42, 58, 47, 0.48);
   border-radius: 28px 21px 30px 20px / 21px 30px 20px 27px;
 }
 
@@ -206,7 +201,7 @@
   flex-direction: column;
   justify-content: space-between;
   color: rgba(38, 52, 41, 0.33);
-  box-shadow: 3px 5px 0 rgba(38, 52, 41, 0.07);
+  box-shadow: 2px 4px 0 rgba(42, 58, 47, 0.05);
 }
 
 .stack-card span {
@@ -225,7 +220,7 @@
 
 .stack-card--one {
   z-index: 2;
-  background: #e8e1c9;
+  background: #ebe4ce;
   transform:
     translate(14px, 14px)
     rotate(1.2deg)
@@ -234,7 +229,7 @@
 
 .stack-card--two {
   z-index: 1;
-  background: #dce5ce;
+  background: #dde6cf;
   transform:
     translate(27px, 27px)
     rotate(2.3deg)
@@ -248,8 +243,8 @@
   touch-action: pan-y;
   transform-style: preserve-3d;
   box-shadow:
-    0 30px 70px rgba(72, 62, 39, 0.13),
-    4px 5px 0 rgba(38, 52, 41, 0.12);
+    0 22px 48px rgba(72, 62, 39, 0.1),
+    3px 4px 0 rgba(42, 58, 47, 0.08);
 }
 
 .swipe-card__flip {
@@ -277,13 +272,7 @@
   padding: 30px;
   display: flex;
   flex-direction: column;
-  background:
-    radial-gradient(
-      circle at 88% 10%,
-      rgba(219, 231, 207, 0.46),
-      transparent 27%
-    ),
-    rgba(255, 253, 247, 0.96);
+  background: rgba(255, 252, 245, 0.97);
 }
 
 .swipe-card__front::after {
@@ -364,10 +353,10 @@
   margin: 0;
   font-family:
     "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
-  font-weight: 520;
-  font-size: clamp(39px, 4vw, 54px);
+  font-weight: 510;
+  font-size: clamp(40px, 4.1vw, 56px);
   line-height: 0.98;
-  letter-spacing: -0.047em;
+  letter-spacing: -0.05em;
 }
 
 .card-main p {
@@ -576,7 +565,7 @@
   position: relative;
   min-height: 270px;
   padding: 20px 6px 20px 22px;
-  border-left: 1px solid rgba(38, 52, 41, 0.2);
+  border-left: 1px solid rgba(42, 58, 47, 0.16);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -625,6 +614,16 @@
   border-radius: 50%;
 }
 
+.deck-side-mascot {
+  width: 64px;
+  height: auto;
+  margin-top: 18px;
+  align-self: flex-start;
+  transform: rotate(-2deg);
+  filter: drop-shadow(0 6px 10px rgba(72, 62, 39, 0.07));
+  pointer-events: none;
+}
+
 .deck-actions {
   width: min(100%, 640px);
   margin: 30px auto 0;
@@ -636,13 +635,13 @@
 .deck-action {
   min-height: 50px;
   appearance: none;
-  border: 1.5px solid rgba(38, 52, 41, 0.58);
+  border: 1.3px solid rgba(42, 58, 47, 0.42);
   cursor: pointer;
   font-family: "SFMono-Regular", Consolas, monospace;
   font-size: 10px;
   font-weight: 840;
   letter-spacing: 0.055em;
-  box-shadow: 2px 3px 0 rgba(38, 52, 41, 0.14);
+  box-shadow: 2px 3px 0 rgba(42, 58, 47, 0.1);
 }
 
 .deck-action:disabled {
@@ -865,6 +864,10 @@
   }
 
   .deck-side-note {
+    display: none;
+  }
+
+  .deck-side-mascot {
     display: none;
   }
 
