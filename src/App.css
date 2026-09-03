@@ -3,13 +3,11 @@
   min-height: 100vh;
   overflow: hidden;
   isolation: isolate;
-  background:
-    radial-gradient(circle at 12% 9%, rgba(255, 255, 255, 0.82), transparent 22%),
-    radial-gradient(circle at 88% 15%, rgba(219, 231, 207, 0.48), transparent 25%),
-    linear-gradient(135deg, #f7f1df 0%, #f2ead6 52%, #efe4cb 100%);
+  background: var(--paper);
 }
 
 .paper-texture {
+  display: none;
   position: fixed;
   inset: 0;
   z-index: -1;
@@ -833,6 +831,7 @@
 /* Decorative doodles */
 
 .doodle-field {
+  display: none;
   position: fixed;
   inset: 0;
   pointer-events: none;

@@ -12,8 +12,10 @@ import {
   X,
 } from "lucide-react";
 import "./App.css";
+import "./SwipeDeck.css";
+import { SwipeDeck } from "./components/SwipeDeck";
 
-type Screen = "onboarding" | "home";
+type Screen = "onboarding" | "home" | "deck";
 
 const roleOptions = [
   "Running people",
@@ -49,7 +51,7 @@ const reviewNotes = [
     detail:
       "The number of cards a learner should move through before a knowledge check appears is still TBD.",
     demo:
-      "A temporary threshold will be used when the deck experience is implemented.",
+      "Milestone 2 uses five seed cards and then shows a review handoff instead of pretending the production threshold is final.",
   },
   {
     title: "Video threshold",
@@ -210,6 +212,13 @@ function App() {
   const [activeModule, setActiveModule] = useState("foundations");
 
   const canContinue = Boolean(selectedRole || freeText.trim());
+
+  const learnerFlavor =
+    selectedRole || freeText.trim() || "your day-to-day";
+
+  const activeModuleData = modules.find(
+    (module) => module.id === activeModule,
+  );
 
   return (
     <main className="app-shell">
@@ -381,7 +390,7 @@ function App() {
               </section>
             </motion.div>
           </motion.section>
-        ) : (
+        ) : screen === "home" ? (
           <motion.section
             key="home"
             className="screen home-screen"
@@ -480,21 +489,50 @@ function App() {
             >
               <div>
                 <span className="next-up__label">SELECTED</span>
-                <strong>
-                  {modules.find((module) => module.id === activeModule)?.title}
-                </strong>
+                <strong>{activeModuleData?.title}</strong>
               </div>
 
               <p>
-                The swipeable learning deck is the next interaction we will
-                build into this demo.
+                {activeModule === "foundations"
+                  ? "A five-card interaction prototype is ready. Drag the stack, reveal deeper explanations, and choose your own learning depth."
+                  : `${activeModuleData?.title} remains visible and open in the product structure. This milestone demonstrates the swipe interaction inside Foundations first.`}
               </p>
 
-              <span className="hand-arrow" aria-hidden="true">
-                ↝
-              </span>
+              <motion.button
+                className="next-up__action"
+                onClick={() => {
+                  if (activeModule === "foundations") {
+                    setScreen("deck");
+                    return;
+                  }
+
+                  setActiveModule("foundations");
+                }}
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <span>
+                  {activeModule === "foundations"
+                    ? "Enter deck"
+                    : "View demo deck"}
+                </span>
+                <ArrowRight size={16} />
+              </motion.button>
             </motion.div>
           </motion.section>
+        ) : (
+          <motion.div
+            key="deck"
+            initial={{ opacity: 0, x: 34, scale: 0.994 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: -28, scale: 0.994 }}
+            transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <SwipeDeck
+              learnerFlavor={learnerFlavor}
+              onBack={() => setScreen("home")}
+            />
+          </motion.div>
         )}
       </AnimatePresence>
 
