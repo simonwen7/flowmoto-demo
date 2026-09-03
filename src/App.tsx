@@ -13,9 +13,13 @@ import {
 } from "lucide-react";
 import "./App.css";
 import "./SwipeDeck.css";
+import "./KnowledgeCheck.css";
 import { SwipeDeck } from "./components/SwipeDeck";
+import { KnowledgeCheck } from "./components/KnowledgeCheck";
+import { demoCards } from "./data/demoCards";
 
-type Screen = "onboarding" | "home" | "deck";
+type Screen = "onboarding" | "home" | "deck" | "quiz";
+type DeckMode = "daily" | "remediation";
 
 const roleOptions = [
   "Running people",
@@ -51,7 +55,15 @@ const reviewNotes = [
     detail:
       "The number of cards a learner should move through before a knowledge check appears is still TBD.",
     demo:
-      "Milestone 2 uses five seed cards and then shows a review handoff instead of pretending the production threshold is final.",
+      "Milestone 3 uses five seed cards before the prepared demo Knowledge Check.",
+  },
+  {
+    title: "Question pipeline",
+    status: "Needs decision",
+    detail:
+      "The production workflow for LLM-generated questions, human review, review SLA, and rejected-question fallback is not finalized.",
+    demo:
+      "This demo uses three prepared questions so the feedback and remediation experience can be reviewed safely.",
   },
   {
     title: "Video threshold",
@@ -59,7 +71,7 @@ const reviewNotes = [
     detail:
       "The rule for when a concept is complex enough to require short-form video is not defined.",
     demo:
-      "Video will remain a presentation placeholder until that rule is agreed.",
+      "Video remains outside the active demo flow until that rule is agreed.",
   },
   {
     title: "Tier 2 agentic scope",
@@ -67,7 +79,7 @@ const reviewNotes = [
     detail:
       "The final REB-compliant boundary between Copilot-style tooling and truly agentic workflows remains open.",
     demo:
-      "Tier 2 will be shown as a concept preview rather than a production capability.",
+      "Tier 2 will remain a concept preview rather than a production capability.",
   },
 ];
 
@@ -158,8 +170,10 @@ function ReviewPanel({
                     <span>{String(index + 1).padStart(2, "0")}</span>
                     <span className="decision-pill">{note.status}</span>
                   </div>
+
                   <h3>{note.title}</h3>
                   <p>{note.detail}</p>
+
                   <div className="demo-assumption">
                     <strong>Demo assumption</strong>
                     <span>{note.demo}</span>
@@ -211,6 +225,9 @@ function App() {
   const [reviewOpen, setReviewOpen] = useState(false);
   const [activeModule, setActiveModule] = useState("foundations");
 
+  const [deckMode, setDeckMode] = useState<DeckMode>("daily");
+  const [remediationCardIds, setRemediationCardIds] = useState<string[]>([]);
+
   const canContinue = Boolean(selectedRole || freeText.trim());
 
   const learnerFlavor =
@@ -219,6 +236,35 @@ function App() {
   const activeModuleData = modules.find(
     (module) => module.id === activeModule,
   );
+
+  const remediationCards = demoCards.filter((card) =>
+    remediationCardIds.includes(card.id),
+  );
+
+  const enterDailyDeck = () => {
+    setDeckMode("daily");
+    setRemediationCardIds([]);
+    setScreen("deck");
+  };
+
+  const finishQuiz = (missedCardIds: string[]) => {
+    if (missedCardIds.length === 0) {
+      setDeckMode("daily");
+      setRemediationCardIds([]);
+      setScreen("home");
+      return;
+    }
+
+    setRemediationCardIds(missedCardIds);
+    setDeckMode("remediation");
+    setScreen("deck");
+  };
+
+  const finishRemediation = () => {
+    setDeckMode("daily");
+    setRemediationCardIds([]);
+    setScreen("home");
+  };
 
   return (
     <main className="app-shell">
@@ -316,6 +362,7 @@ function App() {
                     <p className="eyebrow">PICK A FLAVOR</p>
                     <h2>Choose the closest fit.</h2>
                   </div>
+
                   <span className="pencil-number">01</span>
                 </div>
 
@@ -336,6 +383,7 @@ function App() {
                         whileTap={{ scale: 0.97 }}
                       >
                         <span>{role}</span>
+
                         {selected && (
                           <motion.span
                             className="role-check"
@@ -360,12 +408,14 @@ function App() {
                   <span className="sr-only">
                     Describe what you do day to day
                   </span>
+
                   <textarea
                     value={freeText}
                     onChange={(event) => setFreeText(event.target.value)}
                     placeholder='e.g. "I run a small clinic and use AI for scheduling and notes."'
                     rows={3}
                   />
+
                   <span className="scribble-corner" aria-hidden="true">
                     ↘
                   </span>
@@ -426,6 +476,7 @@ function App() {
               <div className="flavor-banner__icon">
                 <Sparkles size={19} />
               </div>
+
               <p>
                 Your role only changes the examples we use.
                 <strong> Every module stays open to you.</strong>
@@ -444,12 +495,22 @@ function App() {
                       active ? "module-card--active" : ""
                     }`}
                     onClick={() => setActiveModule(module.id)}
-                    whileHover={{ y: -7, rotate: index === 1 ? 0.35 : -0.35 }}
+                    whileHover={{
+                      y: -7,
+                      rotate: index === 1 ? 0.35 : -0.35,
+                    }}
                     whileTap={{ scale: 0.985 }}
-                    transition={{ type: "spring", stiffness: 320, damping: 22 }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 320,
+                      damping: 22,
+                    }}
                   >
                     <div className="module-card__top">
-                      <span className="module-number">{module.eyebrow}</span>
+                      <span className="module-number">
+                        {module.eyebrow}
+                      </span>
+
                       <span className="module-icon">
                         <Icon size={23} strokeWidth={1.8} />
                       </span>
@@ -494,15 +555,15 @@ function App() {
 
               <p>
                 {activeModule === "foundations"
-                  ? "A five-card interaction prototype is ready. Drag the stack, reveal deeper explanations, and choose your own learning depth."
-                  : `${activeModuleData?.title} remains visible and open in the product structure. This milestone demonstrates the swipe interaction inside Foundations first.`}
+                  ? "A five-card interaction prototype is ready. Drag the stack, reveal deeper explanations, and continue into an immediate-feedback Knowledge Check."
+                  : `${activeModuleData?.title} remains visible and open in the product structure. This demo currently demonstrates the complete Foundations learning loop first.`}
               </p>
 
               <motion.button
                 className="next-up__action"
                 onClick={() => {
                   if (activeModule === "foundations") {
-                    setScreen("deck");
+                    enterDailyDeck();
                     return;
                   }
 
@@ -514,23 +575,50 @@ function App() {
                 <span>
                   {activeModule === "foundations"
                     ? "Enter deck"
-                    : "View demo deck"}
+                    : "View demo loop"}
                 </span>
                 <ArrowRight size={16} />
               </motion.button>
             </motion.div>
           </motion.section>
-        ) : (
+        ) : screen === "deck" ? (
           <motion.div
-            key="deck"
+            key={`deck-${deckMode}-${remediationCardIds.join("-")}`}
             initial={{ opacity: 0, x: 34, scale: 0.994 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
             exit={{ opacity: 0, x: -28, scale: 0.994 }}
-            transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+            transition={{
+              duration: 0.42,
+              ease: [0.22, 1, 0.36, 1],
+            }}
           >
             <SwipeDeck
               learnerFlavor={learnerFlavor}
+              mode={deckMode}
+              cards={
+                deckMode === "remediation"
+                  ? remediationCards
+                  : undefined
+              }
               onBack={() => setScreen("home")}
+              onStartQuiz={() => setScreen("quiz")}
+              onComplete={finishRemediation}
+            />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="quiz"
+            initial={{ opacity: 0, x: 34, scale: 0.994 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: -28, scale: 0.994 }}
+            transition={{
+              duration: 0.42,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+          >
+            <KnowledgeCheck
+              onBack={() => setScreen("home")}
+              onComplete={finishQuiz}
             />
           </motion.div>
         )}

@@ -8,24 +8,34 @@ import {
 } from "framer-motion";
 import {
   ArrowLeft,
+  ArrowRight,
   Check,
   ChevronRight,
   RotateCcw,
   Sparkles,
   X,
 } from "lucide-react";
-import { demoCards } from "../data/demoCards";
+import { demoCards, type DemoCard } from "../data/demoCards";
 
 type DetailMode = "what" | "unsure" | null;
+type DeckMode = "daily" | "remediation";
 
 type SwipeDeckProps = {
   learnerFlavor: string;
   onBack: () => void;
+  cards?: DemoCard[];
+  mode?: DeckMode;
+  onStartQuiz?: () => void;
+  onComplete?: () => void;
 };
 
 export function SwipeDeck({
   learnerFlavor,
   onBack,
+  cards = demoCards,
+  mode = "daily",
+  onStartQuiz,
+  onComplete,
 }: SwipeDeckProps) {
   const [cardIndex, setCardIndex] = useState(0);
   const [detailMode, setDetailMode] = useState<DetailMode>(null);
@@ -42,33 +52,25 @@ export function SwipeDeck({
     [0.15, 0.94, 1, 0.94, 0.15],
   );
 
-  const skipOpacity = useTransform(
-    x,
-    [-190, -70, 0],
-    [1, 0.28, 0],
-  );
+  const skipOpacity = useTransform(x, [-190, -70, 0], [1, 0.28, 0]);
+  const knowOpacity = useTransform(x, [0, 70, 190], [0, 0.28, 1]);
 
-  const knowOpacity = useTransform(
-    x,
-    [0, 70, 190],
-    [0, 0.28, 1],
-  );
-
-  const currentCard = demoCards[cardIndex];
-  const firstBackCard = demoCards[cardIndex + 1];
-  const secondBackCard = demoCards[cardIndex + 2];
+  const currentCard = cards[cardIndex];
+  const firstBackCard = cards[cardIndex + 1];
+  const secondBackCard = cards[cardIndex + 2];
 
   const isFinished = !currentCard;
 
+  const denominator = Math.max(cards.length, 1);
+
   const progress = isFinished
     ? 100
-    : ((cardIndex + 1) / demoCards.length) * 100;
+    : ((cardIndex + 1) / denominator) * 100;
 
   const learnerLabel = useMemo(() => {
     const value = learnerFlavor.trim();
 
     if (!value) return "your day-to-day";
-
     if (value.length <= 48) return value;
 
     return `${value.slice(0, 48).trim()}…`;
@@ -83,8 +85,7 @@ export function SwipeDeck({
     const viewportWidth =
       typeof window === "undefined" ? 900 : window.innerWidth;
 
-    const target =
-      direction * Math.max(viewportWidth * 0.92, 760);
+    const target = direction * Math.max(viewportWidth * 0.92, 760);
 
     const controls = animate(x, target, {
       duration: reducedMotion ? 0.01 : 0.36,
@@ -107,10 +108,7 @@ export function SwipeDeck({
     });
   };
 
-  const handleDragEnd = (
-    offsetX: number,
-    velocityX: number,
-  ) => {
+  const handleDragEnd = (offsetX: number, velocityX: number) => {
     const crossedDistance = Math.abs(offsetX) > 115;
     const crossedVelocity = Math.abs(velocityX) > 700;
 
@@ -132,26 +130,40 @@ export function SwipeDeck({
   return (
     <section className="screen deck-screen">
       <div className="deck-back-row">
-        <button
-          className="deck-back-link"
-          onClick={onBack}
-        >
+        <button className="deck-back-link" onClick={onBack}>
           <ArrowLeft size={16} strokeWidth={1.9} />
           Modules
         </button>
 
         <span className="deck-demo-label">
-          INTERACTION PROTOTYPE
+          {mode === "daily"
+            ? "INTERACTION PROTOTYPE"
+            : "REMEDIATION LOOP"}
         </span>
       </div>
 
       <header className="deck-heading">
         <div>
-          <p className="eyebrow">FOUNDATIONS · DAILY DECK</p>
+          <p className="eyebrow">
+            {mode === "daily"
+              ? "FOUNDATIONS · DAILY DECK"
+              : "FOUNDATIONS · BACK IN THE DECK"}
+          </p>
+
           <h1>
-            One idea.
-            <br />
-            <em>Then move.</em>
+            {mode === "daily" ? (
+              <>
+                One idea.
+                <br />
+                <em>Then move.</em>
+              </>
+            ) : (
+              <>
+                One more
+                <br />
+                <em>pass.</em>
+              </>
+            )}
           </h1>
         </div>
 
@@ -160,8 +172,18 @@ export function SwipeDeck({
             <Sparkles size={16} />
           </span>
           <div>
-            <strong>Today’s rhythm</strong>
-            <span>Swipe · wonder · move on</span>
+            <strong>
+              {mode === "daily"
+                ? "Today’s rhythm"
+                : "Quick revisit"}
+            </strong>
+            <span>
+              {mode === "daily"
+                ? "Swipe · wonder · move on"
+                : `${cards.length} missed ${
+                    cards.length === 1 ? "idea" : "ideas"
+                  } · original cards`}
+            </span>
           </div>
         </div>
       </header>
@@ -170,16 +192,16 @@ export function SwipeDeck({
         <div className="deck-progress__meta">
           <span>
             {isFinished
-              ? "DEMO LOOP COMPLETE"
+              ? mode === "daily"
+                ? "DEMO LOOP COMPLETE"
+                : "REVIEW COMPLETE"
               : `CARD ${String(cardIndex + 1).padStart(
                   2,
                   "0",
-                )} / ${String(demoCards.length).padStart(2, "0")}`}
+                )} / ${String(cards.length).padStart(2, "0")}`}
           </span>
 
-          <span>
-            {Math.round(progress)}%
-          </span>
+          <span>{Math.round(progress)}%</span>
         </div>
 
         <div className="deck-progress__track">
@@ -256,15 +278,10 @@ export function SwipeDeck({
                   dragElastic={0.22}
                   dragMomentum={false}
                   onDragEnd={(_, info) =>
-                    handleDragEnd(
-                      info.offset.x,
-                      info.velocity.x,
-                    )
+                    handleDragEnd(info.offset.x, info.velocity.x)
                   }
                   whileTap={
-                    detailMode
-                      ? undefined
-                      : { cursor: "grabbing" }
+                    detailMode ? undefined : { cursor: "grabbing" }
                   }
                 >
                   <motion.div
@@ -315,9 +332,7 @@ export function SwipeDeck({
                       )}
 
                       <div className="card-bottom-line">
-                        <span>
-                          drag or tap a button below
-                        </span>
+                        <span>drag or tap a button below</span>
                         <span aria-hidden="true">↝</span>
                       </div>
                     </div>
@@ -347,9 +362,7 @@ export function SwipeDeck({
 
                       <div className="detail-grid">
                         <div className="detail-block">
-                          <span className="detail-number">
-                            01
-                          </span>
+                          <span className="detail-number">01</span>
                           <div>
                             <strong>Plain-language idea</strong>
                             <p>{currentCard.explanation}</p>
@@ -357,9 +370,7 @@ export function SwipeDeck({
                         </div>
 
                         <div className="detail-block detail-block--analogy">
-                          <span className="detail-number">
-                            02
-                          </span>
+                          <span className="detail-number">02</span>
                           <div>
                             <strong>Try this analogy</strong>
                             <p>{currentCard.analogy}</p>
@@ -465,19 +476,11 @@ export function SwipeDeck({
             drag right when you know it →
           </p>
         </>
-      ) : (
+      ) : mode === "daily" ? (
         <motion.section
           className="deck-finish"
-          initial={{
-            opacity: 0,
-            y: 18,
-            scale: 0.985,
-          }}
-          animate={{
-            opacity: 1,
-            y: 0,
-            scale: 1,
-          }}
+          initial={{ opacity: 0, y: 18, scale: 0.985 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{
             duration: 0.45,
             ease: [0.22, 1, 0.36, 1],
@@ -495,9 +498,7 @@ export function SwipeDeck({
               Next in the learning loop
             </div>
 
-            <p className="eyebrow">
-              KNOWLEDGE CHECK
-            </p>
+            <p className="eyebrow">KNOWLEDGE CHECK</p>
 
             <h2>
               Nice. Now we check
@@ -506,15 +507,15 @@ export function SwipeDeck({
             </h2>
 
             <p className="deck-finish__lead">
-              In the product flow, a knowledge check appears
-              after a set number of cards. That trigger count
-              has not been finalized yet.
+              This demo moves into a knowledge check after five seed
+              cards. The production trigger count is still an open
+              product decision.
             </p>
 
             <div className="tbd-ticket">
               <div>
                 <span>DEMO ASSUMPTION</span>
-                <strong>Quiz trigger</strong>
+                <strong>5 cards → Knowledge Check</strong>
               </div>
 
               <span className="tbd-ticket__status">
@@ -525,10 +526,10 @@ export function SwipeDeck({
             <div className="deck-finish__actions">
               <button
                 className="finish-primary"
-                onClick={replayDeck}
+                onClick={onStartQuiz}
               >
-                <RotateCcw size={17} />
-                Replay the deck
+                Start knowledge check
+                <ArrowRight size={17} />
               </button>
 
               <button
@@ -537,6 +538,61 @@ export function SwipeDeck({
               >
                 Back to modules
                 <ChevronRight size={17} />
+              </button>
+            </div>
+          </div>
+        </motion.section>
+      ) : (
+        <motion.section
+          className="deck-finish"
+          initial={{ opacity: 0, y: 18, scale: 0.985 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{
+            duration: 0.45,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+        >
+          <div className="deck-finish__stack" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </div>
+
+          <div className="deck-finish__content">
+            <div className="status-chip">
+              <Check size={15} />
+              Remediation complete
+            </div>
+
+            <p className="eyebrow">LOOP CLOSED</p>
+
+            <h2>
+              Back through.
+              <br />
+              <em>Now move on.</em>
+            </h2>
+
+            <p className="deck-finish__lead">
+              The original flashcards connected to missed questions
+              have now been placed back into the learning flow and
+              reviewed again.
+            </p>
+
+            <div className="deck-finish__actions">
+              <button
+                className="finish-primary"
+                onClick={onComplete}
+              >
+                Return to modules
+                <ArrowRight size={17} />
+              </button>
+
+              <button
+                className="finish-secondary"
+                onClick={replayDeck}
+              >
+                <RotateCcw size={17} />
+                Replay these cards
               </button>
             </div>
           </div>
